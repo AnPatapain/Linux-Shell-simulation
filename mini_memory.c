@@ -17,10 +17,6 @@ void* mini_calloc (int size_element, int number_element) {
 
     int taille_demandee = size_element * number_element;
 
-    if(malloc_list == NULL) {
-        printf("\nNULLLLLL\n");
-    }
-
     if (number_element <= 0) {
         perror("ERROR");
         return NULL;
@@ -47,36 +43,28 @@ void* mini_calloc (int size_element, int number_element) {
     }
 
     int i = 0;
-    
     while (i < number_element) {
         ( (char *)buffer )[i] = '\0';
         i++;
     }
 
     if(malloc_list == NULL) {
+
         malloc_list = sbrk(sizeof(struct malloc_element));
         malloc_list->zone = buffer;
         malloc_list->taille = taille_demandee;
         malloc_list->statut = 1;
         malloc_list->next_zone = NULL;
 
-        if( ( (char *)(malloc_list->zone) )[0] == '\0' ) {
-            printf("\nhehe\n");
-        }
-        
     }else {
+        
         struct malloc_element* next = sbrk(sizeof(struct malloc_element));
         next->zone = buffer;
         next->taille = taille_demandee;
         next->statut = 1;
         next->next_zone = malloc_list;
         malloc_list = next;
-
-        if( ( (char *)(malloc_list->next_zone->zone) )[0] == '\0' ) {
-            printf("\nhaha\n");
-        }
-
-
+    
     }
 
     return buffer;
@@ -95,5 +83,5 @@ void mini_free(void *ptr) {
 }
 
 void mini_exit() {
-    _exit(10);
+    _exit(1);
 }

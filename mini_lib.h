@@ -7,4 +7,14 @@ void mini_free (void *ptr);
 
 void mini_exit();
 
+void mini_printf(char *);
+
+int mini_scanf(char *, int);
+
+int mini_strlen(char *);
+
+int mini_strcpy(char *s, char *d);
+
+int mini_strcmp(char *s1, char *s2);
+
 #endif
