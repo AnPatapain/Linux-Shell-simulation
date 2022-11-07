@@ -2,46 +2,103 @@
 #include "mini_lib.h"
 #include <string.h>
 #include <stdlib.h>
+
+
+void run_use_case(char c);
+
+/*Test for module mini_memory */
+void test_mini_memory();
+
+/*Test for module mini_string*/
+void test_mini_string();
+
+
+
+
 int main() {
 
-    // char *test1 = mini_calloc(sizeof(char), 5);
-    // char *test2 = mini_calloc(sizeof(char), 5);
+    // test_mini_memory();
+
+    test_mini_string();
+    mini_exit();
+}
+
+void test_mini_string() {
+
+    /* Test for printf */
+    // mini_printf("unique");
+    // mini_printf("abc\nde");
+    // mini_printf("Ciao");
+    // mini_printf("Bonjour");
+    // mini_printf("tout le monde\n");
+    // mini_printf("\nhehe\n");
+
+    /* Test for scanf */
+    // char *text = mini_calloc(sizeof(char), 6);
+    // int count = mini_scanf(text, 6);
+
+    char source[] = "ciao";
+    char *des = mini_calloc(sizeof(char), 2);
+    printf("\n%d\n", mini_strcpy(source, des));
     
 
-    // for(int i = 0; i < 5; i++) {
-    //     test1[i] = 'a';
-    //     test2[i] = 'b';
-    // }
+}
 
-    // for(int i = 0; i < 5; i++) {
-    //     printf("\n%c\n" , test1[i]);
-    //     printf("\n%c\n" , test2[i]);
-    // }
+void test_mini_memory() {
 
-    // mini_free(test2);
+    puts("* Menu [>: allocate new block memory, <: free actuel block memory, !: malloc_liste count] *");
 
-    // char *test3 = mini_calloc(sizeof(char), 3);
-    
-    // for(int i = 0; i < 3; i++) {
-    //     test3[i] = 'c';
-    // }
-    
-    // for(int i = 0; i < 3; i++) {
-    //     printf("\n%c\n" , test3[i]);
-    // }
+    while (1)
+    {
 
-    mini_printf("xinchao\n");
-	mini_printf("bonjour\n");
-	mini_printf("ciao\n");
-	mini_printf("\nem\n");
-    
+        int c = getchar();
+        if (c == EOF)
+            break;
 
-    char s1[20] = "";
-    char s2[20] = "bonjour";
-    printf("\n%d\n", mini_strlen(s1));
+        run_use_case(c);
+    }
 
-    printf("\n%d\n", mini_strcmp(s1, s2));
-    // mini_scanf(c, 10);
-    // mini_printf(c);
-    return 0;
+}
+
+void run_use_case(char c) {
+
+    static struct malloc_element* temp;
+    static char* buffer;
+    static int i;
+
+    switch (c)
+    {
+    case '>':
+        buffer =  mini_calloc(sizeof(char), 5);
+        temp = malloc_list;
+        break;
+
+    case '<':
+        mini_free(buffer);
+        break;
+
+    case '!':
+        struct malloc_element* traversing = temp;
+        int i = 0;
+        while(traversing != NULL){
+            traversing = traversing->next_zone;
+            i++;
+        }
+        printf("\n%d\n", i);
+    case '\n':
+        break;
+
+    case '\t':
+        break;
+
+    default:
+        if(temp->statut == 1) {
+            *(((char*)buffer) + i) = c;
+        }else {
+            perror("segmentation fault");
+            mini_exit();
+        }
+        
+        break;
+    }
 }

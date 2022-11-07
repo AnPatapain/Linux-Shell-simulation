@@ -4,12 +4,15 @@
 #include "mini_lib.h"
 #include<stdio.h>
 
-struct malloc_element {
-    void *zone;
-    int taille;
-    int statut;
-    struct malloc_element* next_zone;
-};
+#define EXIT_FAILURE -1
+#define EXIT_SUCCESS 0
+
+// struct malloc_element {
+//     void *zone;
+//     int taille;
+//     int statut;
+//     struct malloc_element* next_zone;
+// };
 
 struct malloc_element* malloc_list = NULL;
 
@@ -18,12 +21,10 @@ void* mini_calloc (int size_element, int number_element) {
     int taille_demandee = size_element * number_element;
 
     if (number_element <= 0) {
-        perror("ERROR");
-        return NULL;
+        perror("number of element must be greater than 0");
+        mini_exit();
     } 
-
     // CHECK MALLOC LIST TO FIND AVAILABLE ZONE (ie. statut = 1)
-
     if (malloc_list != NULL) {
         struct malloc_element* temp = malloc_list;
         
@@ -35,10 +36,12 @@ void* mini_calloc (int size_element, int number_element) {
         }
     }
 
+    // IF THERE ISN'T ANY AVAILABLE ZONE THEN EXECUTE THE CODES BELOW
+
     void *buffer = sbrk(taille_demandee);
 
     if (buffer == (void *) - 1) {
-        perror("ERROR");
+        perror("error occur for allocating using sbrk");
         return NULL;
     }
 
@@ -74,14 +77,21 @@ void mini_free(void *ptr) {
     struct malloc_element *temp = malloc_list;
     while(temp != NULL) {
         if(temp->zone == ptr) {
-            printf("\nthe first character of zone will soon be libere: %c\n", ( (char*)(temp->zone) )[0] );
             temp->statut = 0;
         }
         temp = temp->next_zone;
     }
-
 }
 
 void mini_exit() {
-    _exit(1);
+    if(malloc_list != NULL) {
+        struct malloc_element* temp = malloc_list;
+        while(temp != NULL) {
+            if(temp->statut == 1) {
+                write(1, temp->zone, temp->taille/sizeof(char));
+            }
+            temp = temp->next_zone;
+        }
+    }
+    _Exit(EXIT_SUCCESS);
 }
