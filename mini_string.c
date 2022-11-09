@@ -11,15 +11,6 @@ char *buffer;
 
 int ind = -1;
 
-/*
-mini_printf("unique");
-mini_printf("abc\ndef");
-mini_printf("Ciao");
-mini_printf("Bonjour");
-mini_printf("tout le monde\n");
-mini_printf("\nhehe\n");
-*/
-
 void mini_printf(char *text) {
 
     if(ind == -1) {
@@ -27,9 +18,12 @@ void mini_printf(char *text) {
         ind = 0;
     }
 
-    for(int i=0; i <= strlen(text); i++) {
+    // printf("\n%d\n", strlen(text));
 
+    for(int i=0; i <= mini_strlen(text); i++) {
+        // printf("\n%c\n", text[i]);
         if(text[i] == '\n' || ind == BUF_SIZE) {
+            // printf("\nhehe inside mini_printf\n");
             write(1, buffer, ind);
             while(ind >= 0) {
                 buffer[ind--] = '\0';
@@ -48,11 +42,13 @@ int mini_scanf(char *buffer, int size_buffer) {
     }
 
     int count = read(1, buffer, size_buffer-1);
+    
     if(count == -1) {
         perror("Read error");
         mini_exit();
     }
     buffer[count] = '\0';
+
     return count;
 }
 
@@ -63,8 +59,11 @@ int mini_strlen(char *s) {
     }
     char *temp = s;
     int len = 0;
-    while(*(temp++) != '\0') {
-        len++;
+    while(*temp != '\0') {     
+        if(*temp != '\n') {
+            len++;
+        }   
+        temp++;
     }
     return len;
 }
@@ -99,9 +98,6 @@ int mini_strcmp(char *s1, char *s2) {
         mini_exit();
     }
 
-    // char *temp_s1 = s1;
-    // char *temp_s2 = s2;
-
     while(*s1 != '\0') {
         if (*s1 != *s2 || *s2 == '\0') {
             return -1;
@@ -117,6 +113,7 @@ int mini_strcmp(char *s1, char *s2) {
     return 0;
 }
 
-//s1 A B C D E
-//s2 A B C D
+void mini_exit_string() {
+    write(1, buffer, ind);
+}
 

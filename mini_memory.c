@@ -37,7 +37,6 @@ void* mini_calloc (int size_element, int number_element) {
     }
 
     // IF THERE ISN'T ANY AVAILABLE ZONE THEN EXECUTE THE CODES BELOW
-
     void *buffer = sbrk(taille_demandee);
 
     if (buffer == (void *) - 1) {
@@ -46,10 +45,14 @@ void* mini_calloc (int size_element, int number_element) {
     }
 
     int i = 0;
-    while (i < number_element) {
-        ( (char *)buffer )[i] = '\0';
+
+    while (i < taille_demandee) {
+        *( (char *)buffer  + i ) = '\0';
         i++;
     }
+
+    
+
 
     if(malloc_list == NULL) {
 
@@ -70,6 +73,14 @@ void* mini_calloc (int size_element, int number_element) {
     
     }
 
+    // for(int i = 0; i < malloc_list->taille; i++) {
+    //     if(*((char*)(malloc_list->zone) + i) == '\0') {
+    //         printf("\n%d\n", i);
+    //     }else {
+    //         printf("\n%c\n", *((char*)(malloc_list->zone) + i) );
+    //     }
+    // }
+
     return buffer;
 }
 
@@ -84,14 +95,7 @@ void mini_free(void *ptr) {
 }
 
 void mini_exit() {
-    if(malloc_list != NULL) {
-        struct malloc_element* temp = malloc_list;
-        while(temp != NULL) {
-            if(temp->statut == 1) {
-                write(1, temp->zone, temp->taille/sizeof(char));
-            }
-            temp = temp->next_zone;
-        }
-    }
+    mini_exit_string();
+    mini_exit_io();
     _Exit(EXIT_SUCCESS);
 }
