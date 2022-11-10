@@ -32,35 +32,27 @@ void test_mini_io() {
     // char *buffer = mini_calloc(sizeof(char), 30);
     // mini_read(buffer, 1, 29, file_to_read);
     // mini_printf(buffer);
-    // char c1 = mini_fgetc(file_to_read);
-    // char c2 = mini_fgetc(file_to_read);
-    // char c3 = mini_fgetc(file_to_read);
-    // char c4 = mini_fgetc(file_to_read);
-    // mini_fputc(file_to_read, 'k');
-
 
     /* just test write */
-    // struct MYFILE *file_to_write = mini_open("text_to_write.txt", 'w');
-    // char buffer[] = "prog-system";
-    // printf("\n%d\n", sizeof(buffer) - 1);
-    // mini_write(buffer, sizeof(char), sizeof(buffer)-1, file_to_write);
-
+    // struct MYFILE *file = mini_open("text_to_write.txt", 'b');
 
     /*Combine mini_read mini_write to test*/
-    struct MYFILE *rw_file = mini_open("text.txt", 'b');
-    char buffer_to_write[] = "c is language for prog-system";
-    mini_write(buffer_to_write, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
-    mini_flush(rw_file);
+    // struct MYFILE *rw_file = mini_open("text.txt", 'b');
+    // char buffer_to_write[] = "c is language for prog-system";
+    // mini_write(buffer_to_write, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
+    // mini_flush(rw_file);
 
-    // reload file
-    rw_file = mini_open("text.txt", 'b');
+    // rw_file = mini_open("text.txt", 'b');
 
-    char *buffer_to_read = mini_calloc(sizeof(char), sizeof(buffer_to_write));
-    mini_read(buffer_to_read, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
+    // char *buffer_to_read = mini_calloc(sizeof(char), sizeof(buffer_to_write));
+    // mini_read(buffer_to_read, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
 
-    mini_printf(buffer_to_read);
+    // mini_printf(buffer_to_read);
 
-    mini_exit_io();
+    /* Partie Commande systeme test */
+    // struct MYFILE *newfile = mini_touch("/home/kean/work/prog-system/TP/TP1_Nguyen_ke_an/new_file.txt");
+    mini_cp("/home/kean/work/prog-system/TP/TP1_Nguyen_ke_an/text_to_read.txt", "/home/kean/work/prog-system/TP/TP1_Nguyen_ke_an/new_file.txt");
+    // mini_exit_io();
 
 }
 

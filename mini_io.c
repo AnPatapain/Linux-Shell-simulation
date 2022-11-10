@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-#define IOBUFFER_SIZE 2048
+#define IOBUFFER_SIZE 10
 
 struct FILE_elm_list* file_list = NULL;
 
@@ -75,10 +75,12 @@ struct MYFILE *mini_open(char *file, char mode) {
 
 int mini_read(void *buffer, int size_element, int number_element, struct MYFILE *file) {
 
+
     if(file->ind_read == -1) {
         file->buffer_read = mini_calloc(sizeof(char), IOBUFFER_SIZE);
         file->ind_read = 0;
-        if( read(file->fd, file->buffer_read, IOBUFFER_SIZE) == -1 ) {
+        int count = read(file->fd, file->buffer_read, IOBUFFER_SIZE);
+        if( count == -1 ) {
             return -1;
         }
     }
@@ -133,11 +135,21 @@ int mini_write(void *buffer, int size_element, int number_element, struct MYFILE
 }
 
 int mini_fgetc(struct MYFILE *file) {
-    char *buffer = mini_calloc(sizeof(char), 1);
-    if (mini_read(buffer, sizeof(char), 1, file) == -1) {
+    // char *buffer = mini_calloc(sizeof(char), 1);
+    // if (mini_read(buffer, sizeof(char), 1, file) == -1) {
+    //     return -1;
+    // }
+    // return *buffer;
+    char buf[1];
+    int count = read(file->fd, buf, 1);
+    if (count == -1) {
         return -1;
     }
-    return *buffer;
+    if (count == 0) {
+        return EOF;
+    }
+    return buf[0];
+
 }
 
 int mini_fputc(struct MYFILE *file, char c) {
@@ -162,6 +174,31 @@ int mini_flush(struct MYFILE *file) {
     return count;
 }
 
+struct MYFILE *mini_touch(char *file_name) {
+    struct MYFILE* file = mini_calloc(sizeof(struct MYFILE), 1);
+    int fd;
+
+    if(fd = open(file_name, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) == -1) {
+        perror("error create file");
+        _Exit(1);
+    }
+
+    file->fd = fd;
+    file->ind_read = -1;
+    file->ind_write = -1;
+    return file;
+}
+
+void mini_cp(char *src, char *dst) {
+    struct MYFILE* src_file = mini_open(src, 'r');
+    struct MYFILE* dst_file = mini_open(dst, 'w');
+
+    char c = mini_fgetc(src_file);
+    while(c != EOF) {
+        mini_fputc(dst_file, c);
+        c = mini_fgetc(src_file);
+    }
+}
 
 void mini_exit_io() {
     if(file_list != NULL) {

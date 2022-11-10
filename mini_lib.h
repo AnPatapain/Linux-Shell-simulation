@@ -58,6 +58,10 @@ int mini_fgetc(struct MYFILE* file);
 
 int mini_fputc(struct MYFILE* file, char c);
 
+struct MYFILE* mini_touch(char *file_name);
+
+void mini_cp(char *src, char *dst);
+
 void mini_exit_io();
 
 #endif
