@@ -18,21 +18,25 @@ void mini_printf(char *text) {
         ind = 0;
     }
 
-    // printf("\n%d\n", strlen(text));
-
-    for(int i=0; i <= mini_strlen(text); i++) {
+    // printf("\n%d\n", mini_strlen(text));
+    int i = 0;
+    while(text[i] != '\0') {
         // printf("\n%c\n", text[i]);
         if(text[i] == '\n' || ind == BUF_SIZE) {
-            // printf("\nhehe inside mini_printf\n");
-            write(1, buffer, ind);
+            // printf("\ninside mini_printf %d  %d\n", i, ind);
+            buffer[ind] = text[i];
+            write(1, buffer, ind+1);
             while(ind >= 0) {
                 buffer[ind--] = '\0';
             }
             ind = 0;
+            i++;
+            continue;
         }
 
-        buffer[ind++] = text[i];
+        buffer[ind++] = text[i++];
     }
+
 }
 
 int mini_scanf(char *buffer, int size_buffer) {

@@ -200,6 +200,10 @@ void mini_cp(char *src, char *dst) {
     }
 }
 
+void mini_echo(char *string) {
+    
+}
+
 void mini_exit_io() {
     if(file_list != NULL) {
         struct FILE_elm_list* temp_file = file_list;

@@ -62,6 +62,8 @@ struct MYFILE* mini_touch(char *file_name);
 
 void mini_cp(char *src, char *dst);
 
+void mini_echo(char *string);
+
 void mini_exit_io();
 
 #endif
