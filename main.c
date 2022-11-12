@@ -16,11 +16,14 @@ char* test_mini_io();
 
 /*================= PARTIE SHELL exercise 39 =================================*/
 int mini_help_exec(char **args) {
-    mini_printf("\n++++++++++++++++++++++MINI_SHELL MANUAL++++++++++++++++++++++++\n");
-    mini_printf("\n+ mini_touch file_name: create file                           +\n");
-    mini_printf("\n+ mini_cp source_file des_file: copy source_file to des_file  +\n");
-    mini_printf("\n+ mini_echo line: write line to stdout                        +\n");
-    mini_printf("\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+    mini_printf("\n++++++++++++++++++++++MINI_SHELL MANUAL+++++++++++++++++++++++++++++++++++++++\n");
+    mini_printf("\n+ mini_touch file_name: create file                                          +\n");
+    mini_printf("\n+ mini_cp source_file des_file: copy source_file to des_file                 +\n");
+    mini_printf("\n+ mini_echo line: write line to stdout                                       +\n");
+    mini_printf("\n+ mini_cat file_name: write content of file to stdout                        +\n");
+    mini_printf("\n+ mini_head -n <number> file_name: write number first line of file to stdout +\n");
+    mini_printf("\n+ mini_tail -n <number> line: write number last line of file to stdout       +\n");
+    mini_printf("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 }
 
 int mini_touch_exec(char **args) {
@@ -213,7 +216,9 @@ void mini_shell_loop(void){
 
 /* ========================================= MAIN ======================================= */
 int main() {
-    mini_printf("\nMINI_SHELL STARTS\n");
+    char **args;
+    mini_printf("\nSHELL STARTS TYPE HELP TO SEE AVAILABLE COMMAND\n");
+    mini_help_exec(args);
     mini_shell_loop();
     // mini_tail(5, "text_to_read.txt");
     return 0;
@@ -232,40 +237,6 @@ char* test_mini_io() {
     // char *buffer = mini_calloc(sizeof(char), 30);
     // mini_read(buffer, 1, 29, file_to_read);
     // mini_printf(buffer);
-    struct MYFILE *mini_stdin = mini_open("/dev/stdin", 'r');
-    
-    int bufsize = 1024;
-    int position = 0;
-    char *buffer = malloc(sizeof(char) * bufsize);
-    int c;
-
-    if (!buffer) {
-        fprintf(stderr, "lsh: allocation error\n");
-        exit(EXIT_FAILURE);
-    }
-
-    while (1) {
-        // Read a character
-        c = mini_fgetc(mini_stdin);
-
-        // If we hit EOF, replace it with a null character and return.
-        if (c == EOF || c == '\n') {
-            buffer[position] = '\0';
-            return buffer;
-        } else {
-            buffer[position] = c;
-        }
-        position++;
-        // If we have exceeded the buffer, reallocate.
-        if (position >= bufsize) {
-            bufsize += 1024;
-            buffer = realloc(buffer, bufsize);
-            if (!buffer) {
-                fprintf(stderr, "lsh: allocation error\n");
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
     // printf("\n%c\n", c);
 
 
@@ -274,17 +245,17 @@ char* test_mini_io() {
     // struct MYFILE *file = mini_open("text_to_write.txt", 'b');
 
     /*Combine mini_read mini_write to test*/
-    // struct MYFILE *rw_file = mini_open("text.txt", 'b');
-    // char buffer_to_write[] = "c is language for prog-system";
-    // mini_write(buffer_to_write, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
-    // mini_flush(rw_file);
+    struct MYFILE *rw_file = mini_open("text.txt", 'b');
+    char buffer_to_write[] = "c is language for prog-system";
+    mini_write(buffer_to_write, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
+    mini_flush(rw_file);
 
-    // rw_file = mini_open("text.txt", 'b');
+    rw_file = mini_open("text.txt", 'b');
 
-    // char *buffer_to_read = mini_calloc(sizeof(char), sizeof(buffer_to_write));
-    // mini_read(buffer_to_read, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
+    char *buffer_to_read = mini_calloc(sizeof(char), sizeof(buffer_to_write));
+    mini_read(buffer_to_read, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
 
-    // mini_printf(buffer_to_read);
+    mini_printf(buffer_to_read);
 
     /* Partie Commande systeme test */
     // struct MYFILE *newfile = mini_touch("/home/kean/work/prog-system/TP/TP1_Nguyen_ke_an/new_file.txt");
