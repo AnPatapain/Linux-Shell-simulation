@@ -15,6 +15,13 @@ char* test_mini_io();
 
 
 /*================= PARTIE SHELL exercise 39 =================================*/
+int mini_help_exec(char **args) {
+    mini_printf("\n++++++++++++++++++++++MINI_SHELL MANUAL++++++++++++++++++++++++\n");
+    mini_printf("\n+ mini_touch file_name: create file                           +\n");
+    mini_printf("\n+ mini_cp source_file des_file: copy source_file to des_file  +\n");
+    mini_printf("\n+ mini_echo line: write line to stdout                        +\n");
+    mini_printf("\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+}
 
 int mini_touch_exec(char **args) {
     mini_touch(args[1]);
@@ -28,9 +35,56 @@ int mini_cp_exec(char **args) {
     return 1;
 }
 
-char *command_list[] = {"mini_touch", "mini_cp"};
+int mini_echo_exec(char **args) {
+    int i = 1;
+    while(args[i] != NULL) {
+        mini_echo(args[i]);
+        mini_echo(" ");
+        i++;
+    }
+    return 1;
+}
+
+int mini_cat_exec(char **args) {
+    if(args[1] != NULL) {
+        mini_cat(args[1]);
+    }
+    return 1;
+}
+
+int mini_head_exec(char **args) {
+    // printf("\n%c\n", args[1][1]);
+    if(mini_strcmp(args[1], "-n")==0) {
+        int num_line = atoi(args[2]);
+        mini_head(num_line, args[3]);
+    } else {
+        perror("error: -n lacking");
+    }
+    
+    return 1;
+}
+
+int mini_tail_exec(char **args) {
+    if(mini_strcmp(args[1], "-n")==0) {
+        int num_line = atoi(args[2]);
+        mini_tail(num_line, args[3]);
+    } else {
+        perror("error: -n lacking");
+    }
+    return 1;
+}
+
+char *command_list[] = {"help", "mini_touch", "mini_cp", "mini_echo", "mini_cat", "mini_head", "mini_tail"};
  
-int (*command_list_exec[]) (char **) = {&mini_touch_exec, &mini_cp_exec};
+int (*command_list_exec[]) (char **) = {
+                                            &mini_help_exec, 
+                                            &mini_touch_exec, 
+                                            &mini_cp_exec, 
+                                            &mini_echo_exec, 
+                                            &mini_cat_exec,
+                                            &mini_head_exec,
+                                            &mini_tail_exec
+                                        };
 
 int num_command_list() {
   return sizeof(command_list) / sizeof(char *);
@@ -109,7 +163,7 @@ char **split_command(char *line)
 @return char*
 */
 char *read_command(void) {
-    struct MYFILE *mini_stdin = mini_open("/dev/stdin", 'r');
+    struct MYFILE *mini_stdin = mini_open("/dev/stdin", 'b');
 
     int maxsize = 1024;
     int position = 0;
@@ -146,7 +200,7 @@ void mini_shell_loop(void){
     char *command;
     char **args;
     int status;
-    
+
     do {
 
         printf("\nEntrez la commande\n");
@@ -159,14 +213,10 @@ void mini_shell_loop(void){
 
 /* ========================================= MAIN ======================================= */
 int main() {
-    // mini_cp("text_to_read.txt", "hehehehe.txt");
-    mini_printf(">>\n");
-    mini_printf("\n---------------------------------------MINI_SHELL------------------------------------\n");
-    mini_printf("\nAvailable Command\n");
-    mini_printf("\n<< mini_touch file_location: create file, mini_cp source dest: copy source to dest >>\n");
+    mini_printf("\nMINI_SHELL STARTS\n");
     mini_shell_loop();
-    mini_exit();
-    // return 0;
+    // mini_tail(5, "text_to_read.txt");
+    return 0;
 }
 
 

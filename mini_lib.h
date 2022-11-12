@@ -64,6 +64,12 @@ void mini_cp(char *src, char *dst);
 
 void mini_echo(char *string);
 
+void mini_cat(char *file_name);
+
+void mini_head(int n, char *file_name);
+
+void mini_tail(int n, char *file_name);
+
 void mini_exit_io();
 
 #endif

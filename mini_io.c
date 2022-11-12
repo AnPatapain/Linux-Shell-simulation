@@ -2,7 +2,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <stdio.h>
+// #include <stdio.h>
 
 #define IOBUFFER_SIZE 10
 
@@ -106,7 +106,6 @@ int mini_read(void *buffer, int size_element, int number_element, struct MYFILE 
 }
 
 int mini_write(void *buffer, int size_element, int number_element, struct MYFILE *file) {
-    
     if(file->ind_write == -1) {
         file->buffer_write = mini_calloc(sizeof(char), IOBUFFER_SIZE);
         file->ind_write = 0;
@@ -117,36 +116,26 @@ int mini_write(void *buffer, int size_element, int number_element, struct MYFILE
     int i = 0;
 
     while(i < num_bytes_written) {
-
-        ((char*)file->buffer_write)[file->ind_write] = ((char*)buffer)[i];
-        file->ind_write++;
-
-        if(file->ind_write >= IOBUFFER_SIZE) {
+        if(file->ind_write == IOBUFFER_SIZE) {
             if(write(file->fd, file->buffer_write, file->ind_write) == -1) {
                 return -1;
             }
             file->ind_write = 0;
         }
-
-        i++;
+        ((char*)file->buffer_write)[file->ind_write++] = ((char*)buffer)[i++];
     }
     return i;
 
 }
 
 int mini_fgetc(struct MYFILE *file) {
-    // char *buffer = mini_calloc(sizeof(char), 1);
-    // if (mini_read(buffer, sizeof(char), 1, file) == -1) {
-    //     return -1;
-    // }
-    // return *buffer;
     char buf[1];
     int count = read(file->fd, buf, 1);
     if (count == -1) {
         return -1;
     }
     if (count == 0) {
-        return EOF;
+        return -1;
     }
     return buf[0];
 
@@ -194,13 +183,85 @@ void mini_cp(char *src, char *dst) {
     struct MYFILE* dst_file = mini_open(dst, 'w');
 
     char c = mini_fgetc(src_file);
-    while(c != EOF) {
+    
+    while(c != -1) {
         mini_fputc(dst_file, c);
         c = mini_fgetc(src_file);
     }
+    mini_exit_io();
 }
 
-void mini_echo(char *string) {
+void mini_echo(char *buffer) {
+    struct MYFILE *mini_stdout = mini_open("/dev/stdout", 'b');
+    mini_write(buffer, sizeof(char), mini_strlen(buffer), mini_stdout);
+    mini_exit_io();
+    // mini_printf(buffer);
+    // mini_exit_string();
+}
+
+void mini_cat(char *file_name) {
+    struct MYFILE *file = mini_open(file_name, 'b');
+    char c = mini_fgetc(file);
+
+    while(c != -1) {
+        char *buffer = mini_calloc(sizeof(char), 2);
+        buffer[0] = c;
+        mini_echo(buffer);
+        c = mini_fgetc(file);
+    }
+}
+
+void mini_head(int n, char *file_name) {
+    struct MYFILE *file = mini_open(file_name, 'b');
+    
+    for(int i = 0; i < n; i++) {
+        char c = mini_fgetc(file);
+        while(c != '\n') {
+            if(c == -1) {
+                break;
+            }
+            char *buffer = mini_calloc(sizeof(char), 2);
+            buffer[0] = c;
+            mini_echo(buffer);
+            c = mini_fgetc(file);
+        }
+        if(c == -1) {
+            break;
+        }else {
+            mini_echo("\n");
+        }
+    }
+}
+
+void mini_tail(int n, char *file_name) {
+    struct MYFILE *file = mini_open(file_name, 'a');
+    off_t pos = lseek(file->fd, 0, SEEK_END);
+    int count = 0;
+    while(pos) {
+        lseek(file->fd, pos--, SEEK_SET);
+        if(mini_fgetc(file) == '\n') {
+            if(count++ == n) {
+                break;
+            }
+        }
+    }
+    for(int i = 0; i < n; i++) {
+        char c = mini_fgetc(file);
+        while(c != '\n') {
+            if(c == -1) {
+                break;
+            }
+            char *buffer = mini_calloc(sizeof(char), 2);
+            buffer[0] = c;
+            mini_echo(buffer);
+            c = mini_fgetc(file);
+        }
+        if(c == -1) {
+            break;
+        }else {
+            mini_echo("\n");
+        }
+    }
     
 }
 

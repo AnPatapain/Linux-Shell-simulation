@@ -1,11 +1,11 @@
 #include <unistd.h>
-#include <string.h>
+// #include <string.h>
 #include <errno.h>
 #include "mini_lib.h"
-#include<stdio.h>
+// #include<stdio.h>
 
 
-#define BUF_SIZE 1024
+#define BUF_SIZE 10
 
 char *buffer;
 
@@ -18,26 +18,54 @@ void mini_printf(char *text) {
         ind = 0;
     }
 
-    // printf("\n%d\n", mini_strlen(text));
     int i = 0;
     while(text[i] != '\0') {
         // printf("\n%c\n", text[i]);
         if(text[i] == '\n' || ind == BUF_SIZE) {
             // printf("\ninside mini_printf %d  %d\n", i, ind);
-            buffer[ind] = text[i];
+            //buffer[ind] = text[i];
             write(1, buffer, ind+1);
             while(ind >= 0) {
                 buffer[ind--] = '\0';
             }
             ind = 0;
-            i++;
-            continue;
+            //i++;
+            //continue;
         }
 
         buffer[ind++] = text[i++];
     }
 
 }
+
+
+// void mini_printf(char *text) {
+
+//     if(ind == -1) {
+//         buffer = mini_calloc(sizeof(char), BUF_SIZE);
+//         ind = 0;
+//     }
+
+//     // printf("\n%d\n", mini_strlen(text));
+//     int i = 0;
+//     while(text[i] != '\0') {
+//         // printf("\n%c\n", text[i]);
+//         if(text[i] == '\n' || ind == BUF_SIZE) {
+//             // printf("\ninside mini_printf %d  %d\n", i, ind);
+//             buffer[ind] = text[i];
+//             write(1, buffer, ind+1);
+//             while(ind >= 0) {
+//                 buffer[ind--] = '\0';
+//             }
+//             ind = 0;
+//             i++;
+//             continue;
+//         }
+
+//         buffer[ind++] = text[i++];
+//     }
+
+// }
 
 int mini_scanf(char *buffer, int size_buffer) {
     if (size_buffer <= 0) {
@@ -64,9 +92,7 @@ int mini_strlen(char *s) {
     char *temp = s;
     int len = 0;
     while(*temp != '\0') {     
-        if(*temp != '\n') {
-            len++;
-        }   
+        len++;
         temp++;
     }
     return len;

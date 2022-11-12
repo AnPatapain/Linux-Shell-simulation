@@ -2,17 +2,10 @@
 #include <unistd.h>
 #include <errno.h>
 #include "mini_lib.h"
-#include<stdio.h>
+// #include<stdio.h>
 
 #define EXIT_FAILURE -1
 #define EXIT_SUCCESS 0
-
-// struct malloc_element {
-//     void *zone;
-//     int taille;
-//     int statut;
-//     struct malloc_element* next_zone;
-// };
 
 struct malloc_element* malloc_list = NULL;
 
@@ -72,14 +65,6 @@ void* mini_calloc (int size_element, int number_element) {
         malloc_list = next;
     
     }
-
-    // for(int i = 0; i < malloc_list->taille; i++) {
-    //     if(*((char*)(malloc_list->zone) + i) == '\0') {
-    //         printf("\n%d\n", i);
-    //     }else {
-    //         printf("\n%c\n", *((char*)(malloc_list->zone) + i) );
-    //     }
-    // }
 
     return buffer;
 }
