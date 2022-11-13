@@ -22,15 +22,11 @@ void mini_printf(char *text) {
     while(text[i] != '\0') {
         // printf("\n%c\n", text[i]);
         if(text[i] == '\n' || ind == BUF_SIZE) {
-            // printf("\ninside mini_printf %d  %d\n", i, ind);
-            //buffer[ind] = text[i];
             write(1, buffer, ind+1);
             while(ind >= 0) {
                 buffer[ind--] = '\0';
             }
             ind = 0;
-            //i++;
-            //continue;
         }
 
         buffer[ind++] = text[i++];
@@ -38,34 +34,6 @@ void mini_printf(char *text) {
 
 }
 
-
-// void mini_printf(char *text) {
-
-//     if(ind == -1) {
-//         buffer = mini_calloc(sizeof(char), BUF_SIZE);
-//         ind = 0;
-//     }
-
-//     // printf("\n%d\n", mini_strlen(text));
-//     int i = 0;
-//     while(text[i] != '\0') {
-//         // printf("\n%c\n", text[i]);
-//         if(text[i] == '\n' || ind == BUF_SIZE) {
-//             // printf("\ninside mini_printf %d  %d\n", i, ind);
-//             buffer[ind] = text[i];
-//             write(1, buffer, ind+1);
-//             while(ind >= 0) {
-//                 buffer[ind--] = '\0';
-//             }
-//             ind = 0;
-//             i++;
-//             continue;
-//         }
-
-//         buffer[ind++] = text[i++];
-//     }
-
-// }
 
 int mini_scanf(char *buffer, int size_buffer) {
     if (size_buffer <= 0) {
@@ -144,6 +112,9 @@ int mini_strcmp(char *s1, char *s2) {
 }
 
 void mini_exit_string() {
-    write(1, buffer, ind);
+    if(ind != -1) {
+        write(1, buffer, ind);
+        ind = -1;
+    }
 }
 

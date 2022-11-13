@@ -2,7 +2,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
-// #include <stdio.h>
 
 #define IOBUFFER_SIZE 10
 
@@ -93,6 +92,7 @@ int mini_read(void *buffer, int size_element, int number_element, struct MYFILE 
         file->ind_read++;
 
         if(file->ind_read >= IOBUFFER_SIZE) {
+            
             if( read(file->fd, file->buffer_read, IOBUFFER_SIZE) == -1 ) {
                 return -1;
             }

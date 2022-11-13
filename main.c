@@ -1,8 +1,5 @@
-#include <stdio.h>
 #include "mini_lib.h"
 #include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
 #include <sys/wait.h>
 
 void run_use_case(char c);
@@ -24,6 +21,7 @@ int mini_help_exec(char **args) {
     mini_printf("\n+ mini_head -n <number> file_name: write number first line of file to stdout +\n");
     mini_printf("\n+ mini_tail -n <number> line: write number last line of file to stdout       +\n");
     mini_printf("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+    mini_printf("\n");
 }
 
 int mini_touch_exec(char **args) {
@@ -56,7 +54,6 @@ int mini_cat_exec(char **args) {
 }
 
 int mini_head_exec(char **args) {
-    // printf("\n%c\n", args[1][1]);
     if(mini_strcmp(args[1], "-n")==0) {
         int num_line = atoi(args[2]);
         mini_head(num_line, args[3]);
@@ -105,15 +102,12 @@ int execute_command(char** args) {
     pid = fork();
     if (pid == 0) {
         // Child process
-        // if (execvp(args[0], args) == -1) {
-        //     perror("lsh");
-        // }
         for (int i = 0; i < num_command_list(); i++) {
-            if (strcmp(args[0], command_list[i]) == 0) {
+            if (mini_strcmp(args[0], command_list[i]) == 0) {
                 (*command_list_exec[i])(args);
             }
         }
-        exit(EXIT_FAILURE);
+        mini_exit();
     } else if (pid < 0) {
         perror("lsh");
     } else {
@@ -173,16 +167,11 @@ char *read_command(void) {
     char *buffer = mini_calloc(sizeof(char), maxsize);
     int c;
 
-    if (!buffer) {
-        fprintf(stderr, "lsh: allocation error\n");
-        exit(EXIT_FAILURE);
-    }
-
     while (1) {
         // Read a character
         c = mini_fgetc(mini_stdin);
         // If we hit EOF, replace it with a null character and return.
-        if (c == EOF || c == '\n') {
+        if (c == -1 || c == '\n') {
             buffer[position] = '\0';
             return buffer;
         } else {
@@ -205,8 +194,8 @@ void mini_shell_loop(void){
     int status;
 
     do {
-
-        printf("\nEntrez la commande\n");
+        mini_printf("> ");
+        mini_exit_string();
         command = read_command();
         args = split_command(command);
         status = execute_command(args);
@@ -220,11 +209,8 @@ int main() {
     mini_printf("\nSHELL STARTS TYPE HELP TO SEE AVAILABLE COMMAND\n");
     mini_help_exec(args);
     mini_shell_loop();
-    // mini_tail(5, "text_to_read.txt");
     return 0;
 }
-
-
 
 
 /* ========================================= TEST FUNCTION ============================== */
@@ -232,19 +218,8 @@ int main() {
 
 char* test_mini_io() {
 
-    /* just test read */
-    // struct MYFILE *file_to_read = mini_open("text_to_read.txt", 'r');
-    // char *buffer = mini_calloc(sizeof(char), 30);
-    // mini_read(buffer, 1, 29, file_to_read);
-    // mini_printf(buffer);
-    // printf("\n%c\n", c);
-
-
-
-    /* just test write */
-    // struct MYFILE *file = mini_open("text_to_write.txt", 'b');
-
     /*Combine mini_read mini_write to test*/
+    mini_touch("text.txt");
     struct MYFILE *rw_file = mini_open("text.txt", 'b');
     char buffer_to_write[] = "c is language for prog-system";
     mini_write(buffer_to_write, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
@@ -256,11 +231,8 @@ char* test_mini_io() {
     mini_read(buffer_to_read, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
 
     mini_printf(buffer_to_read);
-
-    /* Partie Commande systeme test */
-    // struct MYFILE *newfile = mini_touch("/home/kean/work/prog-system/TP/TP1_Nguyen_ke_an/new_file.txt");
-    //mini_cp("/home/kean/work/prog-system/TP/TP1_Nguyen_ke_an/text_to_read.txt", "/home/kean/work/prog-system/TP/TP1_Nguyen_ke_an/new_file.txt");
-    // mini_exit_io();
+    mini_exit_string();
+    mini_exit_io();
 
 }
 
@@ -281,7 +253,6 @@ void test_mini_string() {
     mini_printf(text);
 
     /* Test for mini_strlen mini_strcmp mini_strcpy */
-    printf("\n%d\n", mini_strlen(text));
 
     mini_exit_string();
 
@@ -289,13 +260,13 @@ void test_mini_string() {
 
 void test_mini_memory() {
 
-    puts("* Menu [>: allocate new block memory, <: free actuel block memory, !: malloc_liste count] *");
-
     while (1)
     {
+        struct MYFILE *mini_stdin = mini_open("/dev/stdin", 'b');
 
-        int c = getchar();
-        if (c == EOF)
+        // int c = getchar();
+        int c = mini_fgetc(mini_stdin);
+        if (c == -1)
             break;
 
         run_use_case(c);
@@ -312,7 +283,7 @@ void run_use_case(char c) {
     switch (c)
     {
     case '>':
-        buffer =  mini_calloc(sizeof(char), 5);
+        buffer =  mini_calloc(sizeof(char), 1024);
         temp = malloc_list;
         break;
 
@@ -320,14 +291,6 @@ void run_use_case(char c) {
         mini_free(buffer);
         break;
 
-    case '!':
-        struct malloc_element* traversing = temp;
-        int i = 0;
-        while(traversing != NULL){
-            traversing = traversing->next_zone;
-            i++;
-        }
-        printf("\n%d\n", i);
     case '\n':
         break;
 
@@ -336,9 +299,9 @@ void run_use_case(char c) {
 
     default:
         if(temp->statut == 1) {
-            *(((char*)buffer) + i) = c;
+            buffer[i++] = c;
         }else {
-            perror("segmentation fault");
+            perror("buffer was free");
             mini_exit();
         }
         

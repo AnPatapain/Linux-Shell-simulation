@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "mini_lib.h"
-// #include<stdio.h>
+
 
 #define EXIT_FAILURE -1
 #define EXIT_SUCCESS 0
