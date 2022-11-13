@@ -3,8 +3,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <stdio.h>
-
 #define IOBUFFER_SIZE 10
 
 struct FILE_elm_list* file_list = NULL;
@@ -287,14 +285,11 @@ void mini_grep(char *file_name, char *mot) {
     //traverser file jusqu'a EOF, sur mon ordi EOF est -1
     while(c != -1) {
         if(c == mot[j]) {
-            printf("\n%c\n", c);
             while(c == mot[j] && c != -1) {
                 j++;
                 c = mini_fgetc(file);
             }
-            printf("\nj %d\n", j);
             if (j == len && (c == ' ' || c == -1 || c == '\n')) {
-                printf("\nligne %d\n", ligne);
                 lseek(file->fd, ligne, SEEK_SET);
                 c = mini_fgetc(file);
                 while(c != '\n') {
@@ -312,7 +307,6 @@ void mini_grep(char *file_name, char *mot) {
         }
         if(c == '\n') {
             ligne = i + 1;
-            printf("\nligne update %d\n", ligne);
         }
         c = mini_fgetc(file);
         i++;
