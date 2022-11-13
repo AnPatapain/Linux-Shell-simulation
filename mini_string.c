@@ -1,8 +1,6 @@
 #include <unistd.h>
-// #include <string.h>
 #include <errno.h>
 #include "mini_lib.h"
-// #include<stdio.h>
 
 
 #define BUF_SIZE 10

@@ -70,6 +70,12 @@ void mini_head(int n, char *file_name);
 
 void mini_tail(int n, char *file_name);
 
+void mini_clean(char *file_name);
+
+void mini_grep(char *file_name, char *mot);
+
+int wc(char *file_name);
+
 void mini_exit_io();
 
 #endif

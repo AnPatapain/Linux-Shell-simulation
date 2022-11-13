@@ -13,14 +13,16 @@ char* test_mini_io();
 
 /*================= PARTIE SHELL exercise 39 =================================*/
 int mini_help_exec(char **args) {
-    mini_printf("\n++++++++++++++++++++++MINI_SHELL MANUAL+++++++++++++++++++++++++++++++++++++++\n");
-    mini_printf("\n+ mini_touch file_name: create file                                          +\n");
-    mini_printf("\n+ mini_cp source_file des_file: copy source_file to des_file                 +\n");
-    mini_printf("\n+ mini_echo line: write line to stdout                                       +\n");
-    mini_printf("\n+ mini_cat file_name: write content of file to stdout                        +\n");
-    mini_printf("\n+ mini_head -n <number> file_name: write number first line of file to stdout +\n");
-    mini_printf("\n+ mini_tail -n <number> line: write number last line of file to stdout       +\n");
-    mini_printf("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+    mini_printf("\n++++++++++++++++++++++MINI_SHELL MANUAL+++++++++++++++++++++++++++++++++++++++++++++++++\n");
+    mini_printf("\n+ mini_touch file_name: Creer fichier                                                  +\n");
+    mini_printf("\n+ mini_cp source_file des_file: Copier source_file to des_file                         +\n");
+    mini_printf("\n+ mini_echo line: Ecrire line to stdout                                                +\n");
+    mini_printf("\n+ mini_cat file_name: Ecrire fichier to stdout                                         +\n");
+    mini_printf("\n+ mini_head -n <number> file_name: Ecrire number premieres lignes du fichier a stdout  +\n");
+    mini_printf("\n+ mini_tail -n <number> line: Ecrire number dernieres lignes du fichier a stdout       +\n");
+    mini_printf("\n+ mini_clean file_name: Vider fichier s'il en existe et creer un fichier sinon         +\n");
+    mini_printf("\n+ mini_grep pattern file_name: Afficher tous les lignes contenant pattern              +\n");
+    mini_printf("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
     mini_printf("\n");
 }
 
@@ -74,7 +76,44 @@ int mini_tail_exec(char **args) {
     return 1;
 }
 
-char *command_list[] = {"help", "mini_touch", "mini_cp", "mini_echo", "mini_cat", "mini_head", "mini_tail"};
+int mini_clean_exec(char **args) {
+    if(args[1] != NULL) {
+        mini_clean(args[1]);
+    }
+    return 1;
+}
+
+int mini_grep_exec(char **args) {
+    if(args[1] != NULL && args[2] != NULL){
+        mini_grep(args[2], args[1]);
+    }
+    return 1;
+}
+
+int mini_wc_exec(char **args) {
+    int count;
+    if(args[1] != NULL) {
+        struct MYFILE* mini_stdout = mini_open("/dev/stdout", 'b');
+        char *temp = mini_calloc(sizeof(char), 2);
+        count = wc(args[1]);
+        write(1, &count, sizeof(count));
+
+    }
+    return 1;
+}
+
+char *command_list[] = {
+                            "help", 
+                            "mini_touch", 
+                            "mini_cp", 
+                            "mini_echo", 
+                            "mini_cat", 
+                            "mini_head", 
+                            "mini_tail", 
+                            "mini_clean",
+                            "mini_grep",
+                            "mini_wc"
+                        };
  
 int (*command_list_exec[]) (char **) = {
                                             &mini_help_exec, 
@@ -83,7 +122,10 @@ int (*command_list_exec[]) (char **) = {
                                             &mini_echo_exec, 
                                             &mini_cat_exec,
                                             &mini_head_exec,
-                                            &mini_tail_exec
+                                            &mini_tail_exec,
+                                            &mini_clean_exec,
+                                            &mini_grep_exec,
+                                            &mini_wc_exec
                                         };
 
 int num_command_list() {
@@ -209,6 +251,7 @@ int main() {
     mini_printf("\nSHELL STARTS TYPE HELP TO SEE AVAILABLE COMMAND\n");
     mini_help_exec(args);
     mini_shell_loop();
+
     return 0;
 }
 

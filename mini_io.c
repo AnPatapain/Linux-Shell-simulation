@@ -265,6 +265,67 @@ void mini_tail(int n, char *file_name) {
     
 }
 
+void mini_clean(char *file_name) {
+    if(open(file_name, O_TRUNC) == -1) {
+        mini_touch(file_name);
+    }
+}
+
+void mini_grep(char *file_name, char *mot) {
+    struct MYFILE *file = mini_open(file_name, 'b');
+    
+    char c = mini_fgetc(file);
+    int len = mini_strlen(mot);
+    int i = 0;
+    int ligne = 0;
+    int j = 0;
+
+    //traverser file jusqu'a EOF, sur mon ordi EOF est -1
+    while(c != -1) {
+        if(c == mot[j]) {
+            while(c == mot[j] && c != -1) {
+                j++;
+                c = mini_fgetc(file);
+            }
+            if (j == len && (c == ' ' || c == -1)) {
+                lseek(file->fd, ligne, SEEK_SET);
+                c = mini_fgetc(file);
+                while(c != '\n') {
+                    char *buffer = mini_calloc(sizeof(char), 2);
+                    buffer[0] = c;
+                    mini_echo(buffer);
+                    c = mini_fgetc(file);
+                    i++;
+                }
+                mini_printf("\n");
+
+            }
+    
+        }
+        ligne = i - 1;
+        c = mini_fgetc(file);
+        i++;
+        j=0;
+    }
+}
+
+
+int wc(char *file_name) {
+    struct MYFILE* file = mini_open(file_name, 'b');
+    
+    int count = 0;
+    char c = mini_fgetc(file);
+    while(c != -1) {
+        if(c == ' ' || c == '\n') {
+            count++;
+        }
+        c = mini_fgetc(file);
+    }
+    
+    return count;
+}
+
+
 void mini_exit_io() {
     if(file_list != NULL) {
         struct FILE_elm_list* temp_file = file_list;
