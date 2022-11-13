@@ -247,10 +247,12 @@ void mini_shell_loop(void){
 
 /* ========================================= MAIN ======================================= */
 int main() {
-    char **args;
-    mini_printf("\nSHELL STARTS TYPE HELP TO SEE AVAILABLE COMMAND\n");
-    mini_help_exec(args);
-    mini_shell_loop();
+    // char **args;
+    // mini_printf("\nSHELL STARTS TYPE HELP TO SEE AVAILABLE COMMAND\n");
+    // mini_help_exec(args);
+    // mini_shell_loop();
+
+    mini_grep("text.txt", "ultimate");
 
     return 0;
 }
