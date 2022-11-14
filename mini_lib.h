@@ -74,8 +74,29 @@ void mini_clean(char *file_name);
 
 void mini_grep(char *file_name, char *mot);
 
-int wc(char *file_name);
+char* mini_itoa(int a);
+
+void mini_wc(char *file_name);
 
 void mini_exit_io();
+
+
+/* MINI_SHELL PARTIE */
+void mini_shell_loop(void);
+char *read_command(void);
+char **split_command(char *line);
+int execute_command(char **args);
+
+int num_command_list();
+int mini_wc_exec(char **args);
+int mini_grep_exec(char **args);
+int mini_clean_exec(char **args);
+int mini_tail_exec(char **args);
+int mini_head_exec(char **args);
+int mini_cat_exec(char **args);
+int mini_echo_exec(char **args);
+int mini_cp_exec(char **args);
+int mini_touch_exec(char **args);
+int mini_help_exec(char **args);
 
 #endif

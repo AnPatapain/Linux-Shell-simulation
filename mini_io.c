@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <sys/stat.h>
+#include <stdio.h>
+
 #define IOBUFFER_SIZE 10
 
 struct FILE_elm_list* file_list = NULL;
@@ -272,50 +275,87 @@ void mini_clean(char *file_name) {
 }
 
 void mini_grep(char *file_name, char *mot) {
-    struct MYFILE *file = mini_open(file_name, 'b');
-    
+    struct stat file_stat_buff;
+    struct MYFILE* file = mini_open(file_name, 'b');
+
+    if(stat(file_name, &file_stat_buff) == -1) {
+        perror("stat error");
+    }
+
+    //Write file byte to byte to temp_buffer 
+    char *temp_buffer = mini_calloc(sizeof(char), file_stat_buff.st_size + 1);
+    int k = 0;
     char c = mini_fgetc(file);
-    int len = mini_strlen(mot);
-    int i = 0;
-    int ligne = 0;
-    int j = 0;
-
-    // printf("\nlen %d\n", len);
-
-    //traverser file jusqu'a EOF, sur mon ordi EOF est -1
     while(c != -1) {
-        if(c == mot[j]) {
-            while(c == mot[j] && c != -1) {
+        temp_buffer[k++] = c;
+        c = mini_fgetc(file);
+    }
+
+    //Find pattern and print ligne containing this pattern
+    int i = 0;
+    int j = 0;
+    int mot_len = mini_strlen(mot);
+    int ligne = 0;
+
+    while(temp_buffer[i] != '\0') {
+        
+        if(mot[j] == temp_buffer[i]) {
+            while(mot[j] == temp_buffer[i] && temp_buffer[i] != '\0') {
+                i++;
                 j++;
-                c = mini_fgetc(file);
             }
-            if (j == len && (c == ' ' || c == -1 || c == '\n')) {
-                lseek(file->fd, ligne, SEEK_SET);
-                c = mini_fgetc(file);
-                while(c != '\n') {
-                    char *buffer = mini_calloc(sizeof(char), 2);
-                    buffer[0] = c;
-                    mini_echo(buffer);
-                    c = mini_fgetc(file);
+
+            if(j == mot_len && (temp_buffer[i] == ' ' || temp_buffer[i] == '\n' || temp_buffer[i] == '\0')) {
+                if(temp_buffer[ligne] == '\n') {
+                    i = ligne + 1;
+                }else {
+                    i = ligne;
+                }
+                while(temp_buffer[i] != '\n') {
+                    char *echo_buffer = mini_calloc(sizeof(char), 2);
+                    echo_buffer[0] = temp_buffer[i];
+                    mini_echo(echo_buffer);
                     i++;
                 }
                 mini_printf("\n");
                 mini_exit_string();
-
             }
-    
+        }else {
+
+            if(temp_buffer[i] == '\n') {
+                ligne = i;
+            }
+            i++;
+            j = 0;
         }
-        if(c == '\n') {
-            ligne = i + 1;
-        }
-        c = mini_fgetc(file);
-        i++;
-        j=0;
     }
+
+
+
 }
 
+char *mini_itoa(int a)
+{
+    int digits = 0;
+    int _a = a;
+    while (_a != 0)
+    {
+        _a = _a / 10;
+        digits++;
+    }
+    char *returning = mini_calloc(sizeof(char), (digits + 1));
+    // char *returning = calloc(1, digits + 1);
+    *(returning + digits) = '\0';
+    for (int i = 0; a != 0; i++)
+    {
+        int temp = a % 10;
+        *(returning + digits - (i + 1)) = (char)(temp + 48);
+        a = a / 10;
+    }
+    return returning;
+}
 
-int wc(char *file_name) {
+void mini_wc(char *file_name) {
     struct MYFILE* file = mini_open(file_name, 'b');
     
     int count = 0;
@@ -326,8 +366,10 @@ int wc(char *file_name) {
         }
         c = mini_fgetc(file);
     }
-    
-    return count;
+
+    char *buffer = mini_itoa(count);
+    mini_echo(buffer);
+    mini_echo("\n");
 }
 
 
