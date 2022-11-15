@@ -43,7 +43,7 @@ int mini_scanf(char *buffer, int size_buffer) {
         mini_exit();
     }
 
-    int count = read(1, buffer, size_buffer-1);
+    int count = read(STDIN_FILENO, buffer, size_buffer-1);
     
     if(count == -1) {
         mini_perror("in mini_scanf Read error");

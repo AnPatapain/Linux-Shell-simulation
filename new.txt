@@ -1,4 +1,3 @@
-THIS FILE FOR TESTING mini_cp, mini_grep, ...
 je suis NGUYEN Ke An
 je viens du groupe TD1
 jeter hehe

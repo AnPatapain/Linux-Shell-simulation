@@ -231,8 +231,6 @@ void mini_echo(char *buffer) {
     struct MYFILE *mini_stdout = mini_fopen("/dev/stdout", 'b');
     mini_fwrite(buffer, sizeof(char), mini_strlen(buffer), mini_stdout);
     mini_exit_io();
-    // mini_printf(buffer);
-    // mini_exit_string();
 }
 
 void mini_cat(char *file_name) {

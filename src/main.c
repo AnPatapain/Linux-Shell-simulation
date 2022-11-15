@@ -3,8 +3,6 @@
 #include <sys/wait.h>
 
 
-void run_use_case(char c);
-
 void test_mini_memory();
 
 void test_mini_string();
@@ -12,14 +10,12 @@ void test_mini_string();
 void test_mini_io();
 
 
-
-
-/* ========================================= MAIN ======================================= */
 int main() {
     char **args;
     mini_printf("\nSHELL STARTS, TYPE HELP TO SEE AVAILABLE COMMAND\n");
     mini_help_exec(args);
     mini_shell_loop();
+
     return 0;
 }
 
@@ -33,6 +29,20 @@ int main() {
 
 
 /* ========================================= TEST FUNCTION ============================== */
+
+void test_mini_memory() {
+    char* buffer1 = mini_calloc(sizeof(char), 3);
+    buffer1[0] = 'a';
+    buffer1[1] = 'b';
+
+    mini_free(buffer1);
+
+    char* buffer2 = mini_calloc(sizeof(char), 2);
+    
+    if(buffer2[0] == 'a' && buffer2[1] == 'b') {
+        mini_printf("memory block was not clean before being allocated");
+    }
+}
 
 void test_mini_io() {
 
@@ -82,51 +92,3 @@ void test_mini_string() {
 
 }
 
-void test_mini_memory() {
-
-    while (1)
-    {
-        struct MYFILE *mini_stdin = mini_fopen("/dev/stdin", 'b');
-        // int c = getchar();
-        int c = mini_fgetc(mini_stdin);
-        if (c == -1)
-            break;
-
-        run_use_case(c);
-    }
-
-}
-
-void run_use_case(char c) {
-
-    static struct malloc_element* temp;
-    static char* buffer;
-    static int i;
-
-    switch (c)
-    {
-    case '>':
-        buffer =  mini_calloc(sizeof(char), 1024);
-        temp = malloc_list;
-        break;
-
-    case '<':
-        mini_free(buffer);
-        break;
-
-    case '\n':
-        break;
-
-    case '\t':
-        break;
-
-    default:
-        if(temp->statut == 1) {
-            buffer[i++] = c;
-        }else {
-            mini_perror("buffer was free");
-        }
-        
-        break;
-    }
-}
