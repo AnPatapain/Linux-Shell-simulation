@@ -14,8 +14,7 @@ void* mini_calloc (int size_element, int number_element) {
     int taille_demandee = size_element * number_element;
 
     if (number_element <= 0) {
-        perror("number of element must be greater than 0");
-        mini_exit();
+        mini_perror("number of element must be greater than 0");
     } 
     // CHECK MALLOC LIST TO FIND AVAILABLE ZONE (ie. statut = 1)
     if (malloc_list != NULL) {
@@ -33,7 +32,7 @@ void* mini_calloc (int size_element, int number_element) {
     void *buffer = sbrk(taille_demandee);
 
     if (buffer == (void *) - 1) {
-        perror("error occur for allocating using sbrk");
+        mini_perror("error occur for allocating using sbrk");
         return NULL;
     }
 

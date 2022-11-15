@@ -2,13 +2,17 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+
 void run_use_case(char c);
 
 void test_mini_memory();
 
 void test_mini_string();
 
-char* test_mini_io();
+void test_mini_io();
+
+
+
 
 /* ========================================= MAIN ======================================= */
 int main() {
@@ -28,27 +32,31 @@ int main() {
 
 
 
-
-
 /* ========================================= TEST FUNCTION ============================== */
 
-char* test_mini_io() {
+void test_mini_io() {
 
-    /*Combine mini_read mini_write to test*/
-    mini_touch("text.txt");
-    struct MYFILE *rw_file = mini_open("text.txt", 'b');
-    char buffer_to_write[] = "c is language for prog-system";
-    mini_write(buffer_to_write, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
-    mini_flush(rw_file);
+    // /*Combine mini_read mini_write to test*/
+    // mini_touch("text.txt");
+    // struct MYFILE *rw_file = mini_open("text.txt", 'b');
+    // char buffer_to_write[] = "c is language for prog-system";
+    // mini_fwrite(buffer_to_write, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
+    // mini_fflush(rw_file);
 
-    rw_file = mini_open("text.txt", 'b');
+    // rw_file = mini_open("text.txt", 'b');
 
-    char *buffer_to_read = mini_calloc(sizeof(char), sizeof(buffer_to_write));
-    mini_read(buffer_to_read, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
+    // char *buffer_to_read = mini_calloc(sizeof(char), sizeof(buffer_to_write));
+    // mini_fread(buffer_to_read, sizeof(char), sizeof(buffer_to_write)-1, rw_file);
+    // mini_printf(buffer_to_read);
+    // mini_exit_string();
+    // mini_exit_io();
 
-    mini_printf(buffer_to_read);
-    mini_exit_string();
-    mini_exit_io();
+    struct MYFILE* file = mini_fopen("text.txt", 'r');
+    if (mini_fclose(file) == -1) {
+        mini_printf("\nmini_fclose error\n");
+    }else {
+        mini_printf("\nsuccessfully close file\n");
+    }
 
 }
 
@@ -56,7 +64,7 @@ char* test_mini_io() {
 void test_mini_string() {
 
     /* Test for printf */
-    mini_printf("unique");
+    mini_printf("unique\n");
     mini_printf("abc\nde");
     mini_printf("Ciao");
     mini_printf("Bonjour");
@@ -78,8 +86,7 @@ void test_mini_memory() {
 
     while (1)
     {
-        struct MYFILE *mini_stdin = mini_open("/dev/stdin", 'b');
-
+        struct MYFILE *mini_stdin = mini_fopen("/dev/stdin", 'b');
         // int c = getchar();
         int c = mini_fgetc(mini_stdin);
         if (c == -1)
@@ -117,8 +124,7 @@ void run_use_case(char c) {
         if(temp->statut == 1) {
             buffer[i++] = c;
         }else {
-            perror("buffer was free");
-            mini_exit();
+            mini_perror("buffer was free");
         }
         
         break;

@@ -2,19 +2,18 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
-
 #include <sys/stat.h>
-#include <stdio.h>
+
 
 #define IOBUFFER_SIZE 10
 
 struct FILE_elm_list* file_list = NULL;
 
-struct MYFILE *mini_open(char *file, char mode) {
+struct MYFILE *mini_fopen(char *file, char mode) {
 
     if(file == NULL) {
-        perror("ERROR");
-        mini_exit();
+        mini_perror("file name is NULL");
+        
     }
 
     int file_descriptor;
@@ -24,34 +23,33 @@ struct MYFILE *mini_open(char *file, char mode) {
     case 'r':
         file_descriptor =  open(file, O_RDONLY);
         if (file_descriptor == -1) {
-            perror("error open file");
-            mini_exit();
+            mini_perror("error open file");
+            
         }
         break;
     case 'w':
         file_descriptor = open(file, O_WRONLY);
         if (file_descriptor == -1) {
-            perror("error open file");
-            mini_exit();
+            mini_perror("error open file");
+            
         }
         break;
     case 'b':
         file_descriptor = open(file, O_RDWR);
         if (file_descriptor == -1) {
-            perror("error open file");
-            mini_exit();
+            mini_perror("error open file");
+            
         }
         break;
     case 'a':
         file_descriptor = open(file, O_APPEND);
         if (file_descriptor == -1) {
-            perror("error open file");
-            mini_exit();
+            mini_perror("error open file");
+            
         }
         break;
     default:
-        perror("ERROR");
-        mini_exit();
+        mini_perror("UNKNOWN ERROR");
         break;
     }
 
@@ -75,7 +73,42 @@ struct MYFILE *mini_open(char *file, char mode) {
     return myFile;
 }
 
-int mini_read(void *buffer, int size_element, int number_element, struct MYFILE *file) {
+int mini_fclose(struct MYFILE* file) {
+
+    // Close file
+    if(close(file->fd) == -1) {
+        return -1;
+    }
+    // Flush file
+    mini_fflush(file);
+
+
+    // Traverse file_list to find this file, then delete it from file_list
+    struct FILE_elm_list* temp = file_list;
+    struct FILE_elm_list* prev_temp;
+
+    if(temp != NULL && temp->file->fd == file->fd) {
+        file_list = file_list->next;
+        mini_free(temp);
+        return 0;
+    }
+
+    while(temp != NULL && temp->file->fd != file->fd){
+        prev_temp = temp;
+        temp = temp->next;
+    }
+
+    if(temp == NULL) {
+        mini_perror("inside mini_fclose file does not existe in file_liste");
+    }
+
+    prev_temp->next = temp->next;
+    mini_free(temp);
+
+    return 0;
+}
+
+int mini_fread(void *buffer, int size_element, int number_element, struct MYFILE *file) {
 
 
     if(file->ind_read == -1) {
@@ -108,7 +141,7 @@ int mini_read(void *buffer, int size_element, int number_element, struct MYFILE 
     return file->ind_read - 1;
 }
 
-int mini_write(void *buffer, int size_element, int number_element, struct MYFILE *file) {
+int mini_fwrite(void *buffer, int size_element, int number_element, struct MYFILE *file) {
     if(file->ind_write == -1) {
         file->buffer_write = mini_calloc(sizeof(char), IOBUFFER_SIZE);
         file->ind_write = 0;
@@ -147,17 +180,17 @@ int mini_fgetc(struct MYFILE *file) {
 int mini_fputc(struct MYFILE *file, char c) {
     char *buffer = mini_calloc(sizeof(char), 1);
     *buffer = c;
-    if (mini_write(buffer, sizeof(char), 1, file) == -1) {
+    if (mini_fwrite(buffer, sizeof(char), 1, file) == -1) {
         return -1;
     }
     return 1;
 }
 
-int mini_flush(struct MYFILE *file) {
+int mini_fflush(struct MYFILE *file) {
     int count;
     if (file->ind_write != -1) {
         if ( count = write(file->fd, file->buffer_write, file->ind_write) == -1) {
-            perror("error when flush buffer_write");
+            mini_perror("error when flush buffer_write");
             return -1;
         }
         file->ind_write = 0;
@@ -171,7 +204,7 @@ struct MYFILE *mini_touch(char *file_name) {
     int fd;
 
     if(fd = open(file_name, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) == -1) {
-        perror("error create file");
+        mini_perror("error create file");
         _Exit(1);
     }
 
@@ -182,8 +215,8 @@ struct MYFILE *mini_touch(char *file_name) {
 }
 
 void mini_cp(char *src, char *dst) {
-    struct MYFILE* src_file = mini_open(src, 'r');
-    struct MYFILE* dst_file = mini_open(dst, 'w');
+    struct MYFILE* src_file = mini_fopen(src, 'r');
+    struct MYFILE* dst_file = mini_fopen(dst, 'w');
 
     char c = mini_fgetc(src_file);
     
@@ -195,15 +228,15 @@ void mini_cp(char *src, char *dst) {
 }
 
 void mini_echo(char *buffer) {
-    struct MYFILE *mini_stdout = mini_open("/dev/stdout", 'b');
-    mini_write(buffer, sizeof(char), mini_strlen(buffer), mini_stdout);
+    struct MYFILE *mini_stdout = mini_fopen("/dev/stdout", 'b');
+    mini_fwrite(buffer, sizeof(char), mini_strlen(buffer), mini_stdout);
     mini_exit_io();
     // mini_printf(buffer);
     // mini_exit_string();
 }
 
 void mini_cat(char *file_name) {
-    struct MYFILE *file = mini_open(file_name, 'b');
+    struct MYFILE *file = mini_fopen(file_name, 'b');
     char c = mini_fgetc(file);
 
     while(c != -1) {
@@ -215,7 +248,7 @@ void mini_cat(char *file_name) {
 }
 
 void mini_head(int n, char *file_name) {
-    struct MYFILE *file = mini_open(file_name, 'b');
+    struct MYFILE *file = mini_fopen(file_name, 'b');
     
     for(int i = 0; i < n; i++) {
         char c = mini_fgetc(file);
@@ -237,7 +270,7 @@ void mini_head(int n, char *file_name) {
 }
 
 void mini_tail(int n, char *file_name) {
-    struct MYFILE *file = mini_open(file_name, 'a');
+    struct MYFILE *file = mini_fopen(file_name, 'a');
     off_t pos = lseek(file->fd, 0, SEEK_END);
     int count = 0;
     while(pos) {
@@ -276,10 +309,10 @@ void mini_clean(char *file_name) {
 
 void mini_grep(char *file_name, char *mot) {
     struct stat file_stat_buff;
-    struct MYFILE* file = mini_open(file_name, 'b');
+    struct MYFILE* file = mini_fopen(file_name, 'b');
 
     if(stat(file_name, &file_stat_buff) == -1) {
-        perror("stat error");
+        mini_perror("stat error at mini_grep");
     }
 
     //Write file byte to byte to temp_buffer 
@@ -334,41 +367,34 @@ void mini_grep(char *file_name, char *mot) {
 
 }
 
-char *mini_itoa(int a)
-{
-    int digits = 0;
-    int _a = a;
-    while (_a != 0)
-    {
-        _a = _a / 10;
-        digits++;
-    }
-    char *returning = mini_calloc(sizeof(char), (digits + 1));
-    // char *returning = calloc(1, digits + 1);
-    *(returning + digits) = '\0';
-    for (int i = 0; a != 0; i++)
-    {
-        int temp = a % 10;
-        *(returning + digits - (i + 1)) = (char)(temp + 48);
-        a = a / 10;
-    }
-    return returning;
-}
-
 void mini_wc(char *file_name) {
-    struct MYFILE* file = mini_open(file_name, 'b');
-    
-    int count = 0;
+    struct stat file_stat_buff;
+    struct MYFILE* file = mini_fopen(file_name, 'b');
+
+    if(stat(file_name, &file_stat_buff) == -1) {
+        mini_perror("stat error at mini_grep");
+    }
+    //Write file byte to byte to temp_buffer 
+    char *temp_buffer = mini_calloc(sizeof(char), file_stat_buff.st_size + 1);
+    int k = 0;
     char c = mini_fgetc(file);
     while(c != -1) {
-        if(c == ' ' || c == '\n') {
-            count++;
-        }
+        temp_buffer[k++] = c;
         c = mini_fgetc(file);
     }
-
-    char *buffer = mini_itoa(count);
-    mini_echo(buffer);
+    
+    
+    //Now we work on string temp_buffer : )
+    int word_count = 0;
+    int i = 0;
+    while(temp_buffer[i] != '\0') {
+        if((temp_buffer[i] == ' ' && temp_buffer[i + 1] != ' ') || temp_buffer[i] == '\n') {
+            word_count++;
+        }
+        i++;
+    }
+    char *word_count_string = mini_itoa(word_count);
+    mini_echo(word_count_string);
     mini_echo("\n");
 }
 
@@ -377,7 +403,7 @@ void mini_exit_io() {
     if(file_list != NULL) {
         struct FILE_elm_list* temp_file = file_list;
         while(temp_file != NULL) {
-            mini_flush(temp_file->file);
+            mini_fflush(temp_file->file);
             temp_file = temp_file->next;
         }
     }

@@ -28,6 +28,8 @@ int mini_strcpy(char *s, char *d);
 
 int mini_strcmp(char *s1, char *s2);
 
+void mini_perror(char *message);
+
 void mini_exit_string();
 
 // mini_io's function signatures
@@ -46,13 +48,15 @@ struct FILE_elm_list {
 
 extern struct FILE_elm_list* file_list;
 
-struct MYFILE* mini_open(char *, char); 
+struct MYFILE* mini_fopen(char *, char); 
 
-int mini_read(void* buffer, int size_element, int number_element, struct MYFILE* file);
+int mini_fclose(struct MYFILE* file);
 
-int mini_write(void* buffer, int size_element, int number_element, struct MYFILE* file);
+int mini_fread(void* buffer, int size_element, int number_element, struct MYFILE* file);
 
-int mini_flush(struct MYFILE* file);
+int mini_fwrite(void* buffer, int size_element, int number_element, struct MYFILE* file);
+
+int mini_fflush(struct MYFILE* file);
 
 int mini_fgetc(struct MYFILE* file);
 

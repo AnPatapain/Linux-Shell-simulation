@@ -2,8 +2,6 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-
-
 int mini_help_exec(char **args) {
     mini_printf("\n++++++++++++++++++++++++++++++++++MINI_SHELL MANUAL+++++++++++++++++++++++++++++++++++++\n");
     mini_printf("\n+ mini_touch file_name: Creer fichier                                                  +\n");
@@ -14,6 +12,7 @@ int mini_help_exec(char **args) {
     mini_printf("\n+ mini_tail -n <number> line: Ecrire number dernieres lignes du fichier a stdout       +\n");
     mini_printf("\n+ mini_clean file_name: Vider fichier s'il en existe et creer un fichier sinon         +\n");
     mini_printf("\n+ mini_grep pattern file_name: Afficher tous les lignes contenant pattern              +\n");
+    mini_printf("\n+ mini_wc file_name: Afficher le nombre de mots dans un fichier                        +\n");
     mini_printf("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
     mini_printf("\n");
 }
@@ -53,7 +52,7 @@ int mini_head_exec(char **args) {
         int num_line = atoi(args[2]);
         mini_head(num_line, args[3]);
     } else {
-        perror("error: -n lacking");
+        mini_perror("-n lacking");
     }
     
     return 1;
@@ -64,7 +63,7 @@ int mini_tail_exec(char **args) {
         int num_line = atoi(args[2]);
         mini_tail(num_line, args[3]);
     } else {
-        perror("error: -n lacking");
+        mini_perror("-n lacking");
     }
     return 1;
 }
@@ -140,7 +139,7 @@ int execute_command(char** args) {
         }
         mini_exit();
     } else if (pid < 0) {
-        perror("lsh");
+        mini_perror("in execute_command in mini_shell.c pid < 0");
     } else {
         // Parent process
         do {
@@ -190,7 +189,7 @@ char **split_command(char *line)
 @return char*
 */
 char *read_command(void) {
-    struct MYFILE *mini_stdin = mini_open("/dev/stdin", 'b');
+    struct MYFILE *mini_stdin = mini_fopen("/dev/stdin", 'b');
 
     int maxsize = 1024;
     int position = 0;
@@ -224,7 +223,7 @@ void mini_shell_loop(void){
     int status;
 
     do {
-        mini_printf(">> ");
+        mini_printf("> ");
         mini_exit_string();
         command = read_command();
         args = split_command(command);
