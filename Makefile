@@ -1,2 +1,2 @@
-main: mini_string.c mini_io.c mini_memory.c main.c
-	gcc mini_io.c mini_memory.c mini_string.c mini_shell.c main.c -o main
+main: src/mini_string.c src/mini_io.c src/mini_memory.c src/main.c
+	gcc src/mini_io.c src/mini_memory.c src/mini_string.c src/mini_shell.c src/main.c -o main

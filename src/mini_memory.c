@@ -22,6 +22,12 @@ void* mini_calloc (int size_element, int number_element) {
         
         while(temp != NULL) {
             if(temp->statut == 0 && taille_demandee <= temp->taille) {
+                int j = 0;
+
+                while (j < taille_demandee) {
+                    *( (char *)temp->zone  + j ) = '\0';
+                    j++;
+                }
                 return temp->zone;
             }
             temp = temp->next_zone;
