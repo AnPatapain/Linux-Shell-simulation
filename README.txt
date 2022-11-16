@@ -12,6 +12,7 @@ Pour tester, utilisez text.txt pour tester mini_cp
 + mini_wc file_name: Afficher le nombre de mots dans un fichier                        +
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+taper "exit" pour arrêter programme
 
 REPONSES POUR DES QUESTIONS TP1
 
