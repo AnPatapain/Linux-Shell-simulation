@@ -68,17 +68,12 @@ int mini_strlen(char *s) {
     return len;
 }
 
-
 int mini_strcpy(char *s, char *d) {
     
 
     if(s==NULL || d==NULL) {
-        mini_perror("in mini_strcpy");
-        mini_exit();
+        return -1;
     }
-    
-    //Make sure buffer overflow never occur!
-    d = mini_calloc(sizeof(char), mini_strlen(s) + 1);
 
     int count = 0;
 
@@ -89,6 +84,20 @@ int mini_strcpy(char *s, char *d) {
     }
     
     return count;
+}
+
+int mini_strncpy(char *s, char *d, int n) {
+    
+    if(s==NULL || d==NULL || n <= 0) {
+        return -1;
+    }
+
+    int i = 0;
+    while(i < n && s[i] != '\0') {
+        d[i] = s[i];
+        i++;
+    }
+    d[i] = '\0';
 }
 
 int mini_strcmp(char *s1, char *s2) {

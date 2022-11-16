@@ -26,6 +26,8 @@ int mini_strlen(char *);
 
 int mini_strcpy(char *s, char *d);
 
+int mini_strncpy(char *s, char *d, int n);
+
 int mini_strcmp(char *s1, char *s2);
 
 void mini_perror(char *message);
@@ -87,20 +89,33 @@ void mini_exit_io();
 
 /* MINI_SHELL PARTIE */
 void mini_shell_loop(void);
+
 char *read_command(void);
+
 char **split_command(char *line);
+
 int execute_command(char **args);
 
 int num_command_list();
+
 int mini_wc_exec(char **args);
+
 int mini_grep_exec(char **args);
+
 int mini_clean_exec(char **args);
+
 int mini_tail_exec(char **args);
+
 int mini_head_exec(char **args);
+
 int mini_cat_exec(char **args);
+
 int mini_echo_exec(char **args);
+
 int mini_cp_exec(char **args);
+
 int mini_touch_exec(char **args);
+
 int mini_help_exec(char **args);
 
 #endif

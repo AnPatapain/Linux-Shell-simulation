@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-
 void test_mini_memory();
 
 void test_mini_string();

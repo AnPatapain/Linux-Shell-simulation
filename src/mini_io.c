@@ -268,6 +268,8 @@ void mini_head(int n, char *file_name) {
 }
 
 void mini_tail(int n, char *file_name) {
+
+    //Tout d'abord on mettre file_position a bonne position
     struct MYFILE *file = mini_fopen(file_name, 'a');
     off_t pos = lseek(file->fd, 0, SEEK_END);
     int count = 0;
@@ -279,6 +281,8 @@ void mini_tail(int n, char *file_name) {
             }
         }
     }
+
+    //Lire a partir cette file_position
     for(int i = 0; i < n; i++) {
         char c = mini_fgetc(file);
         while(c != '\n') {
@@ -390,6 +394,10 @@ void mini_wc(char *file_name) {
             word_count++;
         }
         i++;
+    }
+    if(word_count == 0) {
+        mini_printf("\n0\n");
+        return;
     }
     char *word_count_string = mini_itoa(word_count);
     mini_echo(word_count_string);
