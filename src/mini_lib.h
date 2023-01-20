@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <sys/stat.h>
+#include<grp.h>
+#include<pwd.h>
+
 #ifndef MINI_LIB
 #define MINI_LIB
 
@@ -85,6 +90,10 @@ char* mini_itoa(int a);
 void mini_wc(char *file_name);
 
 void mini_exit_io();
+
+void print_info(struct stat* stat_buf, char* name);
+
+void mini_ls(int argc, char** argv);
 
 
 /* MINI_SHELL PARTIE */

@@ -14,12 +14,8 @@ int main() {
     mini_printf("\nSHELL STARTS, TYPE HELP TO SEE AVAILABLE COMMAND\n");
     mini_help_exec(args);
     mini_shell_loop();
-
     return 0;
 }
-
-
-
 /* ========================================= TEST FUNCTION ============================== */
 
 void test_mini_memory() {

@@ -2,7 +2,10 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <sys/stat.h>
+#include <time.h>
+// #include <sys/stat.h>
+// #include<grp.h>
+// #include<pwd.h>
 
 
 #define IOBUFFER_SIZE 10
@@ -189,9 +192,9 @@ int mini_fputc(struct MYFILE *file, char c) {
 int mini_fflush(struct MYFILE *file) {
     int count;
     if (file->ind_write != -1) {
-        if ( count = write(file->fd, file->buffer_write, file->ind_write) == -1) {
+        if ( ( count = write(file->fd, file->buffer_write, file->ind_write) ) == -1) {
             mini_perror("error when flush buffer_write");
-            return -1;
+            // return -1;
         }
         file->ind_write = 0;
     }
@@ -203,7 +206,7 @@ struct MYFILE *mini_touch(char *file_name) {
     struct MYFILE* file = mini_calloc(sizeof(struct MYFILE), 1);
     int fd;
 
-    if(fd = open(file_name, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) == -1) {
+    if(( fd = open(file_name, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) ) == -1) {
         mini_perror("error create file");
         _Exit(1);
     }
@@ -414,6 +417,53 @@ void mini_exit_io() {
         }
     }
 }
+
+// void print_info(struct stat* stat_buf, char* name) {
+// 	struct group* users = getgrgid(stat_buf->st_gid);
+// 	struct passwd* user = getpwuid(stat_buf->st_uid);
+
+// 	struct tm *dt;
+// 	time(&(stat_buf->st_ctim));
+// 	dt = localtime(&(stat_buf->st_ctim));
+// 	// char *buffer = (char *)malloc(80*sizeof(char));
+//     char* buffer = mini_calloc(sizeof(char), 80);
+// 	strftime(buffer,80,"%x - %I:%M%p", dt);
+	
+	
+// 	int nb_link = stat_buf->st_nlink;
+// 	char *user_name = user->pw_name;
+// 	char *groupe_name = users->gr_name;
+// 	int size = stat_buf->st_size;
+// 	char* file_name_ = name;
+// 	dt = gmtime(&(stat_buf->st_mtime));
+
+// 	printf("\n%c%c%c%c%c%c%c%c%c %d  %s  %s  %d  %s  %s\n",   stat_buf->st_mode&S_IRUSR?'r':'-',
+// 															  stat_buf->st_mode&S_IWUSR?'w':'-',
+// 															  stat_buf->st_mode&S_IXUSR?'x':'-',
+// 															  stat_buf->st_mode&S_IRGRP?'r':'-',
+// 															  stat_buf->st_mode&S_IWGRP?'w':'-',
+// 															  stat_buf->st_mode&S_IXGRP?'x':'-',
+// 															  stat_buf->st_mode&S_IROTH?'r':'-',
+//  															  stat_buf->st_mode&S_IWOTH?'w':'-',
+//  															  stat_buf->st_mode&S_IXOTH?'x':'-',
+// 															  nb_link, user_name, groupe_name, size, buffer, file_name_);
+
+// }
+
+
+// void mini_ls(int argc, char** argv) {
+//     // struct stat *stat_buf = (struct stat *)malloc(sizeof(struct stat));
+//     struct stat *stat_buf = mini_calloc(sizeof(struct stat), 1);
+	
+// 	for(int i=1; i < argc; i++) {
+		
+// 		if(stat(argv[i], stat_buf) == -1) {
+// 			mini_perror("error occur in stat in mini_ls");
+// 		}
+
+// 		print_info(stat_buf, argv[i]);
+// 	}
+// }
 
 
 

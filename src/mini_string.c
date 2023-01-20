@@ -151,7 +151,8 @@ void mini_perror(char *message) {
     mini_printf(" with error code: ");
     mini_printf(errno_str);
     mini_printf("\n");
-    mini_exit();
+    _Exit(0);
+    // mini_exit();
 }
 
 void mini_exit_string() {
