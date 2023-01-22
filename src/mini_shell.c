@@ -53,7 +53,7 @@ int execute_command(char** args) {
 
 char **split_command(char *line){
     /* 
-    @brief split command into function name, arguments
+    @brief split command into function name, arguments 
     @params command: char*
     @return pointer to pointer to char: char**
     */
@@ -79,6 +79,22 @@ char **split_command(char *line){
     tokens[j+1] = NULL;
     
     return tokens;
+}
+
+int remove_enter_in_buffer(char* buffer) {
+    /*
+    replace '\n' in buffer by '\0'
+    Params: buffer
+    Return: the len of buffer from beginning to '\0'
+    */
+    int k;
+    for(k = 0; k < mini_strlen(buffer); k++) {
+        if(buffer[k] == '\n') {
+            buffer[k] = '\0';
+            break;
+        }
+    }
+    return k;
 }
 
 
@@ -118,17 +134,22 @@ void mini_shell_loop(void){
     @return void
     */
     char exit[] = "exit";
-    char *command;
+    char *command = mini_calloc(sizeof(char), 1024);
+    // char* command;
     char **args;
     int status;
 
     do {
         mini_printf("> ");
         mini_exit_string();
-        command = read_command();
+        // command = read_command();
+        mini_scanf(command, 1024);
+        remove_enter_in_buffer(command);
+
         if(mini_strcmp(command, exit) == 0) {
             break;
         }
+        
         args = split_command(command);
         status = execute_command(args);
 

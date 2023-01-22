@@ -418,52 +418,53 @@ void mini_exit_io() {
     }
 }
 
-// void print_info(struct stat* stat_buf, char* name) {
-// 	struct group* users = getgrgid(stat_buf->st_gid);
-// 	struct passwd* user = getpwuid(stat_buf->st_uid);
-
-// 	struct tm *dt;
-// 	time(&(stat_buf->st_ctim));
-// 	dt = localtime(&(stat_buf->st_ctim));
-// 	// char *buffer = (char *)malloc(80*sizeof(char));
-//     char* buffer = mini_calloc(sizeof(char), 80);
-// 	strftime(buffer,80,"%x - %I:%M%p", dt);
+void mini_print_info(struct stat* stat_buf, char* name) {
+    struct group* users = getgrgid(stat_buf->st_gid);
+	struct passwd* user = getpwuid(stat_buf->st_uid);
 	
-	
-// 	int nb_link = stat_buf->st_nlink;
-// 	char *user_name = user->pw_name;
-// 	char *groupe_name = users->gr_name;
-// 	int size = stat_buf->st_size;
-// 	char* file_name_ = name;
-// 	dt = gmtime(&(stat_buf->st_mtime));
-
-// 	printf("\n%c%c%c%c%c%c%c%c%c %d  %s  %s  %d  %s  %s\n",   stat_buf->st_mode&S_IRUSR?'r':'-',
-// 															  stat_buf->st_mode&S_IWUSR?'w':'-',
-// 															  stat_buf->st_mode&S_IXUSR?'x':'-',
-// 															  stat_buf->st_mode&S_IRGRP?'r':'-',
-// 															  stat_buf->st_mode&S_IWGRP?'w':'-',
-// 															  stat_buf->st_mode&S_IXGRP?'x':'-',
-// 															  stat_buf->st_mode&S_IROTH?'r':'-',
-//  															  stat_buf->st_mode&S_IWOTH?'w':'-',
-//  															  stat_buf->st_mode&S_IXOTH?'x':'-',
-// 															  nb_link, user_name, groupe_name, size, buffer, file_name_);
-
-// }
+	int nb_link = stat_buf->st_nlink;
+	char *user_name = user->pw_name;
+	char *groupe_name = users->gr_name;
+	int size = stat_buf->st_size;
+	char* file_name_ = name;
 
 
-// void mini_ls(int argc, char** argv) {
-//     // struct stat *stat_buf = (struct stat *)malloc(sizeof(struct stat));
-//     struct stat *stat_buf = mini_calloc(sizeof(struct stat), 1);
-	
-// 	for(int i=1; i < argc; i++) {
-		
-// 		if(stat(argv[i], stat_buf) == -1) {
-// 			mini_perror("error occur in stat in mini_ls");
-// 		}
+    mini_printf(stat_buf->st_mode&S_IRUSR?"r":"-");
+    mini_printf(stat_buf->st_mode&S_IWUSR?"w":"-");
+    mini_printf(stat_buf->st_mode&S_IXUSR?"x":"-");
+    mini_printf(stat_buf->st_mode&S_IRGRP?"r":"-");
+    mini_printf(stat_buf->st_mode&S_IWGRP?"w":"-");
+    mini_printf(stat_buf->st_mode&S_IXGRP?"x":"-");
+    mini_printf(stat_buf->st_mode&S_IROTH?"r":"-");
+    mini_printf(stat_buf->st_mode&S_IWOTH?"w":"-");
+    mini_printf(stat_buf->st_mode&S_IXOTH?"x":"-");
+    
+    mini_printf(" ");
+    mini_printf(mini_itoa(nb_link));
+    mini_printf(" ");
+    mini_printf(user_name);
+    mini_printf(" ");
+    mini_printf(groupe_name);
+    mini_printf(" ");
+    mini_printf(mini_itoa(size));
+    mini_printf(" ");
+    mini_printf(file_name_);
+    
+    mini_printf("\n");
+    mini_exit_string();
 
-// 		print_info(stat_buf, argv[i]);
-// 	}
-// }
+	// printf("\n%c%c%c%c%c%c%c%c%c %d  %s  %s  %d  %s\n",       stat_buf->st_mode&S_IRUSR?'r':'-',
+	// 														  stat_buf->st_mode&S_IWUSR?'w':'-',
+	// 														  stat_buf->st_mode&S_IXUSR?'x':'-',
+	// 														  stat_buf->st_mode&S_IRGRP?'r':'-',
+	// 														  stat_buf->st_mode&S_IWGRP?'w':'-',
+	// 														  stat_buf->st_mode&S_IXGRP?'x':'-',
+	// 														  stat_buf->st_mode&S_IROTH?'r':'-',
+ 	// 														  stat_buf->st_mode&S_IWOTH?'w':'-',
+ 	// 														  stat_buf->st_mode&S_IXOTH?'x':'-',
+	// 														  nb_link, user_name, groupe_name, size, file_name_);
+
+}
 
 
 
