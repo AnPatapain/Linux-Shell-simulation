@@ -126,6 +126,9 @@ void mini_shell_loop(void){
         mini_printf("> ");
         mini_exit_string();
         command = read_command();
+        if(mini_strcmp(command, exit) == 0) {
+            break;
+        }
         args = split_command(command);
         status = execute_command(args);
 

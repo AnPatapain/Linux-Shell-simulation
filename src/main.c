@@ -15,6 +15,7 @@ int main() {
     mini_help_exec(args);
     mini_shell_loop();
     return 0;
+    
 }
 /* ========================================= TEST FUNCTION ============================== */
 
