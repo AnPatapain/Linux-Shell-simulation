@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
         mini_perror("argument error in mini_cp");
     }
     if(mini_strcmp(argv[1], "-n")==0) {
-        int num_line = atoi(argv[2]);
+        int num_line = mini_atoi(argv[2], 10);
         mini_tail(num_line, argv[3]);
     } else {
         mini_perror("-n lacking");

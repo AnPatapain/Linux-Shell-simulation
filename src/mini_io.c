@@ -466,5 +466,77 @@ void mini_print_info(struct stat* stat_buf, char* name) {
 
 }
 
+int mini_quickdiff(char* source, char* dest) {
+    // struct MYFILE* fp_src = mini_fopen(source, 'r');
+    // if (fp_src == NULL) {
+    //     mini_perror("fopen source");
+    // }
+    // struct MYFILE* fp_dst = mini_fopen(dest, 'r');
+    // if (fp_dst == NULL) {
+    //     mini_perror("fopen dest");
+    // }
+
+    // char line_src[256];
+    // char line_dst[256];
+
+    // int line_number = 0;
+
+    // while (mini_fread(line_src, sizeof(char), 256, fp_src) != -1) {
+    //     line_number++;
+    //     if (mini_fread(line_dst, sizeof(char), 256, fp_dst) == -1) {
+    //         printf("line %d: only in %s\n", line_number, source);
+    //         break;
+    //     }
+    //     if (mini_strcmp(line_src, line_dst) != 0) {
+    //         printf("line %d: %s", line_number, line_src);
+    //         printf("line %d: %s", line_number, line_dst);
+    //     }
+    // }
+    // while (mini_fread(line_dst, sizeof(char), 256, fp_dst) != -1) {
+    //     line_number++;
+    //     printf("line %d: only in %s\n", line_number, dest);
+    // }
+
+    // mini_fclose(fp_src);
+    // mini_fclose(fp_dst);
+    FILE* fp_src = fopen(source, "r");
+    if (fp_src == NULL) {
+        perror("fopen source");
+        return 1;
+    }
+    FILE* fp_dst = fopen(dest, "r");
+    if (fp_dst == NULL) {
+        perror("fopen dest");
+        fclose(fp_src);
+        return 1;
+    }
+
+    char line_src[256];
+    char line_dst[256];
+
+    int line_number = 0;
+
+    while (fgets(line_src, 256, fp_src) != NULL) {
+        line_number++;
+        if (fgets(line_dst, 256, fp_dst) == NULL) {
+            printf("line %d: only in %s\n", line_number, source);
+            break;
+        }
+        if (mini_strcmp(line_src, line_dst) != 0) {
+            printf("line %d: %s", line_number, line_src);
+            printf("line %d: %s", line_number, line_dst);
+        }
+    }
+    while (fgets(line_dst, 256, fp_dst) != NULL) {
+        line_number++;
+        printf("line %d: only in %s\n", line_number, dest);
+    }
+
+    fclose(fp_src);
+    fclose(fp_dst);
+
+    return 0;
+}
+
 
 

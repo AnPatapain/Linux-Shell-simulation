@@ -37,6 +37,10 @@ int mini_strcmp(char *s1, char *s2);
 
 void mini_perror(char *message);
 
+char* mini_itoa(int a);
+
+int mini_atoi(char* s, int base);
+
 void mini_exit_string();
 
 // mini_io's function signatures
@@ -85,8 +89,6 @@ void mini_clean(char *file_name);
 
 void mini_grep(char *file_name, char *mot);
 
-char* mini_itoa(int a);
-
 void mini_wc(char *file_name);
 
 void mini_exit_io();
@@ -95,6 +97,7 @@ void print_info(struct stat* stat_buf, char* name);
 
 void mini_ls(int argc, char** argv);
 
+int mini_quickdiff(char* source, char* dest);
 
 /* MINI_SHELL PARTIE */
 void mini_shell_loop(void);
@@ -104,26 +107,6 @@ char *read_command(void);
 char **split_command(char *line);
 
 int execute_command(char **args);
-
-int num_command_list();
-
-int mini_wc_exec(char **args);
-
-int mini_grep_exec(char **args);
-
-int mini_clean_exec(char **args);
-
-int mini_tail_exec(char **args);
-
-int mini_head_exec(char **args);
-
-int mini_cat_exec(char **args);
-
-int mini_echo_exec(char **args);
-
-int mini_cp_exec(char **args);
-
-int mini_touch_exec(char **args);
 
 int mini_help_exec(char **args);
 

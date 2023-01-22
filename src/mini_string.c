@@ -143,6 +143,16 @@ char *mini_itoa(int a)
     return returning;
 }
 
+int mini_atoi(char* s, int base) {
+    int final = 0;
+
+    for (int i = 0; s[i] != '\0'; ++i){
+        final = final * base + s[i] - '0';
+    }
+        
+    return final;
+}
+
 void mini_perror(char *message) {
     
     // Error number of errno has maximum 3 digits
